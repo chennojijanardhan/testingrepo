@@ -2,29 +2,30 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup Node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install Dependencies
-      run: echo "Skipping install for now"
+      - name: Install Dependencies
+        run: echo "Skipping install"
 
-    - name: Run Tests
-      run: echo "Tests executed"
+      - name: Run Tests
+        run: echo "Running tests"
 
-    - name: Notify Slack
-      run: |
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"🚀 Pipeline executed successfully"}' \
-        ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify Slack
+        run: |
+          curl -X POST -H "Content-type: application/json" \
+          --data '{"text":"🚀 Pipeline executed successfully"}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
