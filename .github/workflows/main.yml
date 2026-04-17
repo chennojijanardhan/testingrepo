@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Unit Tests
+      run: npm run test:unit
+
+    - name: Run Integration Tests
+      run: npm run test:integration
+
+    - name: Run E2E Tests
+      run: npm run test:e2e
+
+    - name: Notify Slack (Success)
+      if: success()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"✅ SUCCESS: CI Passed\nRepo: ${{ github.repository }}\nCommit: ${{ github.sha }}\"
+        }" \
+        ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack (Failure)
+      if: failure()
+      run: |
+        curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"❌ FAILED: CI Pipeline\nRepo: ${{ github.repository }}\nCheck: https://github.com/${{ github.repository }}/actions\"
+        }" \
+        ${{ secrets.SLACK_WEBHOOK_URL }}
